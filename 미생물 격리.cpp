@@ -58,6 +58,35 @@ void debug(vector<Info>& list) {
 	}
 }
 
+bool isEdge(int ny, int nx) {
+	return ny == N - 1 || ny == 0 || nx == N - 1 || nx == 0;
+}
+
+void setEdge(Info& cur) {
+	cur.dir = getOpposite(cur.dir);
+	cur.count /= 2;
+	cur.sum = cur.count;
+}
+
+void mergeGroup(vector<Info>& list, int& next, Info& cur, int i) {
+	if (list[next].count < cur.count) { // 내가 더 큰 경우, 해당 군집을 먹는다
+		cur.sum += list[next].sum; // 임시 부분합
+
+		// 상대 군집 삭제
+		list[next].sum = 0;
+		list[next].count = 0;
+
+		next = i; // 현재 자리 변경
+	}
+	else { // 내가 더 작으면, 내 군집이 먹힌다
+		list[next].sum += cur.sum;
+
+		// 내 군집 삭제
+		cur.count = 0;
+		cur.sum = 0;
+	}
+}
+
 int simulate(int time, vector<Info>& list) {
 
 	for (int t = 0; t < time; t++) {
@@ -70,42 +99,22 @@ int simulate(int time, vector<Info>& list) {
 			
 			int ny = cur.y + dy[cur.dir];
 			int nx = cur.x + dx[cur.dir];
-
 			auto& next = arr[ny][nx];
+
 			if (next == -1) { // 해당 구역에 존재하지 않을 때
 				next = i;
-				if (ny == N - 1 || ny == 0 || nx == N - 1 || nx == 0) { // 가장자리 셀
-					cur.dir = getOpposite(cur.dir);
-					cur.count /= 2;
-					cur.sum = cur.count;
+				if (isEdge(ny, nx)) { // 가장자리 셀
+					setEdge(cur);
 				}
 			}
 			else { // 해당 구역에 다른 군집이 있을 때 :: 이 경우엔 가장자리에서 만날 수 없음
 				if (next < i) { // 그 군집이 이동한 군집인 경우(나보다 숫자가 작은 경우)
-					if (list[next].count < cur.count) { // 내가 더 큰 경우, 해당 군집을 먹는다
-						cur.sum += list[next].sum; // 임시 부분합
-
-						// 상대 군집 삭제
-						list[next].sum = 0;
-						list[next].count = 0;
-
-						next = i; // 현재 자리 변경
-					}
-					else { // 내가 더 작으면, 내 군집이 먹힌다
-						list[next].sum += cur.sum;
-
-						// 내 군집 삭제
-						cur.count = 0;
-						cur.sum = 0;
-					}
-					
+					mergeGroup(list, next, list[i], i);
 				}
 				else { // 아직 이동하지 않은 군집인 경우 :: 무시한다
 					next = i;
-					if (ny == N - 1 || ny == 0 || nx == N - 1 || nx == 0) { // 가장자리 셀
-						cur.dir = getOpposite(cur.dir);
-						cur.count /= 2;
-						cur.sum = cur.count;
+					if (isEdge(ny, nx)) { // 가장자리 셀
+						setEdge(cur);
 					}
 				}
 			}
