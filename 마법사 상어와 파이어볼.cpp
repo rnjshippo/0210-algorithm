@@ -1,4 +1,4 @@
-#include <iostream>
+ï»¿#include <iostream>
 #include <vector>
 #include <cmath>
 using namespace std;
@@ -6,7 +6,7 @@ using namespace std;
 #define MP 1200
 
 struct Ball {
-	int y, x, m, s, d; // y, x, Áú·®, ¼Óµµ, ¹æÇâ
+	int y, x, m, s, d; // y, x, ì§ˆëŸ‰, ì†ë„, ë°©í–¥
 };
 
 int N, M, K;
@@ -32,7 +32,7 @@ void merge_divide(vector<int> arr[][MAX]) {
 				auto& t = c[k];
 				mass_sum += b_list[t].m;
 				speed_sum += b_list[t].s;
-				b_list[t].m = 0; // ±âÁ¸ Á¦°Å
+				b_list[t].m = 0; // ê¸°ì¡´ ì œê±°
 				bool is_even = (b_list[t].d % 2) == 0;
 				if (is_even) {
 					even = true && even;
