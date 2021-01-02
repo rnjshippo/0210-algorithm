@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 using namespace std;
-#define MAX 82
 
 int N;
 string word = "";
